@@ -1,0 +1,59 @@
+﻿<Window x:Class="TarkovMapOverlay.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TarkovMapOverlay"
+        xmlns:sliderMenu="clr-namespace:SliderMenu"
+        mc:Ignorable="d"
+        Title="Tarkov Map Overlay" Height="450" Width="800" 
+        WindowStyle="None"
+        BorderBrush="Black"
+        BorderThickness="1"
+        Background="Black"
+        AllowsTransparency="True">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      ResizeBorderThickness="3"
+                      UseAeroCaptionButtons="False">
+        </WindowChrome>
+    </WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="26*"/>
+        </Grid.RowDefinitions>
+        <Menu x:Name="Menu" Grid.Row="1">
+            <MenuItem Header="_Menu" Height="30" Width="50">
+                <MenuItem Header="_Maps">
+                    <MenuItem Click="Customs_OnClick" Header="_Customs" />
+                    <MenuItem Click="Shoreline_OnClick" Header="_Shoreline" />
+                    <MenuItem Click="Wooeds_OnClick" Header="_Woods" />
+                    <MenuItem Click="Interchange_OnClick" Header="_Interchange" />
+                    <MenuItem Click="Reserv_OnClick" Header="_Reserv" />
+                    <MenuItem Click="Labs_OnClick" Header="_The Lab" />
+                    <MenuItem Click="Factory_OnClick" Header="_Factory" />
+                </MenuItem>
+                <MenuItem Click="Browse_OnClick" Header="_Browse" />
+                <MenuItem Header="_Opacity">
+                    <sliderMenu:SliderMenuItem 
+                        x:Name="sliderMenu" >
+                        <MenuItem Header="10" sliderMenu:SliderMenuItem.Value="10" />
+                        <MenuItem Header="20" sliderMenu:SliderMenuItem.Value="20" />
+                        <MenuItem Header="30" sliderMenu:SliderMenuItem.Value="30" />
+                        <MenuItem Header="40" sliderMenu:SliderMenuItem.Value="40" />
+                        <MenuItem Header="50" sliderMenu:SliderMenuItem.Value="50" />
+                        <MenuItem Header="60" sliderMenu:SliderMenuItem.Value="60" />
+                        <MenuItem Header="70" sliderMenu:SliderMenuItem.Value="70" />
+                        <MenuItem Header="80" sliderMenu:SliderMenuItem.Value="80" />
+                        <MenuItem Header="90" sliderMenu:SliderMenuItem.Value="90" />
+                        <MenuItem  Header="100" sliderMenu:SliderMenuItem.Value="100" />
+                    </sliderMenu:SliderMenuItem>
+                </MenuItem>
+                <Separator />
+                <MenuItem Click="Exit_OnClick" Header="_Exit" />
+            </MenuItem>
+        </Menu>
+        <Image Grid.Row="2" Name="TarkovMap" Height="400" Width="400" />
+</Grid>
+</Window>
