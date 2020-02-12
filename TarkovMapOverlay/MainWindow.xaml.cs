@@ -104,6 +104,7 @@ namespace TarkovMapOverlay
                 if (this.WindowState == WindowState.Minimized)
                 {
                     this.WindowState = WindowState.Normal;
+                    this.Topmost = true;
                 }
                 else
                 {
