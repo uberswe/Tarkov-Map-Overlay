@@ -2,7 +2,7 @@
 
 A simple application to show you a map while playing Tarkov. Check the [Releases](https://github.com/UberSwe/Tarkov-Map-Overlay/releases) page for the latest .exe file.
 
-I stream Escape from Tarkov among other games [live on Twitch](https://www.twitch.tv/uberswe). Come say hello, maybe ask a question or a suggestion and if you like my stream give me a follow: [https://www.twitch.tv/uberswe](https://www.twitch.tv/uberswe) 
+I stream Escape from Tarkov among other games [live on Twitch](https://www.twitch.tv/uberswe). Come say hello, maybe ask a question or give a suggestion and if you like my stream give me a follow: [https://www.twitch.tv/uberswe](https://www.twitch.tv/uberswe) 
 
 # Basics
 
