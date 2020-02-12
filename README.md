@@ -13,5 +13,6 @@ Run the .exe file, it will show a window which is always on top. Use the menu to
  - The window listens to click events when you look in your inventory or stash. This can be fixed later but it was too much work for the initial release.
  - Save the state so that the application remembers the last map you looked at and it's position and size.
  - Fix the menu so that it's always visible and remove the white background areas, make them transparent.
+ - Sometimes the application has trouble staying on top after being minimized and it will flicker and go away or stay on top and flicker. I am trying to find a good solution for this.
  
  I didn't make any of the maps, I included some maps from [the official Tarkov wiki](https://escapefromtarkov.gamepedia.com/Escape_from_Tarkov_Wiki) for convenience and I do not claim any rights to them nor do they fall under the License of this project.
