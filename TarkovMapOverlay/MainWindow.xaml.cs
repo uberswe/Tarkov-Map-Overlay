@@ -23,6 +23,7 @@ namespace TarkovMapOverlay
 
         public MainWindow()
         {
+            Console.WriteLine("Application launching");
             InitializeComponent();
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
@@ -79,23 +80,6 @@ namespace TarkovMapOverlay
             }
         }
 
-        protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
-        {
-            // Toggle the map with the m key
-            if (e.Key == Key.M)
-            {
-                if (this.WindowState == WindowState.Minimized)
-                {
-                    this.WindowState = WindowState.Normal;
-                }
-                else
-                {
-                    this.WindowState = WindowState.Minimized;
-                }
-            }
-            base.OnKeyDown(e);
-        }
-
         private void GlobalHookKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             // Toggle the map with the m key
@@ -103,11 +87,13 @@ namespace TarkovMapOverlay
             {
                 if (this.WindowState == WindowState.Minimized)
                 {
+                    Console.WriteLine("WindowState Normal");
                     this.WindowState = WindowState.Normal;
                     this.Topmost = true;
                 }
                 else
                 {
+                    Console.WriteLine("WindowState Normal");
                     this.WindowState = WindowState.Minimized;
                 }
             }
