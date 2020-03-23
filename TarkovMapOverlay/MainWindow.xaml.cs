@@ -23,7 +23,6 @@ namespace TarkovMapOverlay
 
         public MainWindow()
         {
-            Console.WriteLine("Application launching");
             InitializeComponent();
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
@@ -61,9 +60,8 @@ namespace TarkovMapOverlay
             if (sliderMenu.Value > 1.0 && sliderMenu.Value != opacity)
             {
                 opacity = sliderMenu.Value;
-                Console.WriteLine(opacity);
                 this.Opacity = opacity * 0.01;
-                Background = new SolidColorBrush(Colors.Black) { Opacity = opacity * 0.01};
+                this.Background = new SolidColorBrush(Colors.Black) { Opacity = opacity * 0.01};
             }
 
             var currentPoint = e.GetPosition(this);
@@ -87,13 +85,11 @@ namespace TarkovMapOverlay
             {
                 if (this.WindowState == WindowState.Minimized)
                 {
-                    Console.WriteLine("WindowState Normal");
                     this.WindowState = WindowState.Normal;
                     this.Topmost = true;
                 }
                 else
                 {
-                    Console.WriteLine("WindowState Normal");
                     this.WindowState = WindowState.Minimized;
                 }
             }
@@ -162,6 +158,22 @@ namespace TarkovMapOverlay
         {
             BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods.jpg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
+        }
+
+        private void TransparentBackground_OnCheck(object sender, RoutedEventArgs e)
+        {
+            opacity = sliderMenu.Value;
+            this.Background = new SolidColorBrush(Colors.Black) { Opacity = 0 };
+            this.Opacity = opacity * 0.01;
+            this.BorderBrush = new SolidColorBrush(Colors.Black) {Opacity = 0};
+        }
+
+        private void TransparentBackground_OnUncheck(object sender, RoutedEventArgs e)
+        {
+            opacity = sliderMenu.Value;
+            this.Background = new SolidColorBrush(Colors.Black) { Opacity = 1 };
+            this.Opacity = opacity * 0.01;
+            this.BorderBrush = new SolidColorBrush(Colors.Black) { Opacity = 1 };
         }
     }
 }

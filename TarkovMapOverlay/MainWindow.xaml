@@ -51,6 +51,8 @@
                     </sliderMenu:SliderMenuItem>
                 </MenuItem>
                 <Separator />
+                <MenuItem Checked="TransparentBackground_OnCheck" Unchecked="TransparentBackground_OnUncheck" Header="_Transparent_Background" IsCheckable="True"/>
+                <Separator />
                 <MenuItem Click="Exit_OnClick" Header="_Exit" />
             </MenuItem>
         </Menu>
