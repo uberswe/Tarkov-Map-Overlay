@@ -20,6 +20,7 @@ namespace TarkovMapOverlay
         private IKeyboardMouseEvents m_GlobalHook;
         private Point startPoint;
         private double opacity;
+        private bool transparentBackground = false;
 
         public MainWindow()
         {
@@ -60,8 +61,17 @@ namespace TarkovMapOverlay
             if (sliderMenu.Value > 1.0 && sliderMenu.Value != opacity)
             {
                 opacity = sliderMenu.Value;
-                this.Opacity = opacity * 0.01;
-                this.Background = new SolidColorBrush(Colors.Black) { Opacity = opacity * 0.01};
+                if (transparentBackground)
+                {
+                    this.Background = new SolidColorBrush(Colors.Black) {Opacity = 0};
+                    this.Opacity = opacity * 0.01;
+                    this.BorderBrush = new SolidColorBrush(Colors.Black) {Opacity = 0};
+                }
+                else
+                {
+                    this.Opacity = opacity * 0.01;
+                    this.Background = new SolidColorBrush(Colors.Black) { Opacity = opacity * 0.01 };
+                }
             }
 
             var currentPoint = e.GetPosition(this);
@@ -166,6 +176,7 @@ namespace TarkovMapOverlay
             this.Background = new SolidColorBrush(Colors.Black) { Opacity = 0 };
             this.Opacity = opacity * 0.01;
             this.BorderBrush = new SolidColorBrush(Colors.Black) {Opacity = 0};
+            transparentBackground = true;
         }
 
         private void TransparentBackground_OnUncheck(object sender, RoutedEventArgs e)
@@ -174,6 +185,7 @@ namespace TarkovMapOverlay
             this.Background = new SolidColorBrush(Colors.Black) { Opacity = 1 };
             this.Opacity = opacity * 0.01;
             this.BorderBrush = new SolidColorBrush(Colors.Black) { Opacity = 1 };
+            transparentBackground = false;
         }
     }
 }
