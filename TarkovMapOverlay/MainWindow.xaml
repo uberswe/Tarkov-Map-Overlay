@@ -51,7 +51,8 @@
                     </sliderMenu:SliderMenuItem>
                 </MenuItem>
                 <Separator />
-                <MenuItem Checked="TransparentBackground_OnCheck" Unchecked="TransparentBackground_OnUncheck" Header="_Transparent_Background" IsCheckable="True"/>
+                <MenuItem Click="MinimizeKeybind_OnClick" Header="_Change M Keybind for minimizing" Name="minimizeKeybindItem" StaysOpenOnClick="True"/>
+                <MenuItem Checked="TransparentBackground_OnCheck" Unchecked="TransparentBackground_OnUncheck" Header="_Transparent Background" IsCheckable="True"/>
                 <Separator />
                 <MenuItem Click="Exit_OnClick" Header="_Exit" />
             </MenuItem>

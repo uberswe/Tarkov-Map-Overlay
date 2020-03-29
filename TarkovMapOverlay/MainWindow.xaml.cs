@@ -21,6 +21,8 @@ namespace TarkovMapOverlay
         private Point startPoint;
         private double opacity;
         private bool transparentBackground = false;
+        private Keys minimizeKey = Keys.M;
+        private bool toggleMinimizeKeybind = false;
 
         public MainWindow()
         {
@@ -90,8 +92,14 @@ namespace TarkovMapOverlay
 
         private void GlobalHookKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            // Toggle the map with the m key
-            if (e.KeyCode == Keys.M)
+            // Change the current keybind for minimizing the map overlay
+            if (toggleMinimizeKeybind)
+            {
+                minimizeKey = e.KeyCode;
+                minimizeKeybindItem.Header = "Change " + e.KeyCode.ToString() + " Keybind for minimizing";
+                toggleMinimizeKeybind = false;
+            } 
+            else if (e.KeyCode == minimizeKey) // Toggle minimizing of map with a keybing
             {
                 if (this.WindowState == WindowState.Minimized)
                 {
@@ -186,6 +194,12 @@ namespace TarkovMapOverlay
             this.Opacity = opacity * 0.01;
             this.BorderBrush = new SolidColorBrush(Colors.Black) { Opacity = 1 };
             transparentBackground = false;
+        }
+
+        private void MinimizeKeybind_OnClick(object sender, RoutedEventArgs e)
+        {
+            minimizeKeybindItem.Header = "Press any key to set a keybind";
+            toggleMinimizeKeybind = true;
         }
     }
 }
