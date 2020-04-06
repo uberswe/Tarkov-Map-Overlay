@@ -2,6 +2,8 @@
 
 ![Tarkov Map Overlay Screenshot](/screenshots/main.png)
 
+[Here is a video if you would like to see how the overlay works](https://youtu.be/tZnibe1S1a8)
+
 A simple application to show you a map while playing Tarkov. Check the [Releases](https://github.com/UberSwe/Tarkov-Map-Overlay/releases) page for the latest .exe file. Download the .exe under assets below and the click on it to run it. No installation needed. You may need to click "more info" and allow the application to run. If you want to see some of my other content see the links below:
 
  - https://github.com/UberSwe
