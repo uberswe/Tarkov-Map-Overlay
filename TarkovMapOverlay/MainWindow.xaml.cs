@@ -1,10 +1,14 @@
 ﻿using Gma.System.MouseKeyHook;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Controls;
 using System.Windows.Shell;
 using DragEventArgs = System.Windows.DragEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
@@ -23,20 +27,53 @@ namespace TarkovMapOverlay
         private bool transparentBackground = false;
         private Keys minimizeKey = Keys.M;
         private bool toggleMinimizeKeybind = false;
+        private string currentOpenImagePath;
+        private List<string> _savedMaps = new List<string>();
 
         public MainWindow()
         {
             InitializeComponent();
+            
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
 
-            // Initial opacity
-            sliderMenu.Value = 100;
+            //load SettingsFile if exists
+            SavedSettings settings = LoadSettings();
+            //load saved opacity
+            sliderMenu.Value = settings.visual_opacity * 100;
+            //load last opened Map
+            if (settings.currentMapPath != null)
+            {
+                BitmapImage bitmap = new BitmapImage(new Uri(settings.currentMapPath, UriKind.RelativeOrAbsolute));
+                TarkovMap.Source = bitmap;
+            }
+            //load saved transparency BG setting
+            setting_transparency.IsChecked = settings.visual_transparency;
+            //load Custom MapList if Maps were Saved
+            _savedMaps.AddRange(settings.customMapList);
+            foreach (string MapName in settings.customMapList) {
+                System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
+                item.Header = MapName;
+                item.Click += this.ButtonClicked;
+                List_CustomMaps.Items.Add(item);
+            }
+
+            EnableMapListIfNotEmpty();
 
             // Hooks to make the "M" key a keybind to toggle map
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
+        }
 
+        void ButtonClicked(object sender, RoutedEventArgs e) {
+            System.Windows.Controls.MenuItem item = (System.Windows.Controls.MenuItem)sender;
+            string selectedFileName = item.Header.ToString();
+            currentOpenImagePath = selectedFileName;
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(selectedFileName);
+            bitmap.EndInit();
+            TarkovMap.Source = bitmap;
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -123,19 +160,44 @@ namespace TarkovMapOverlay
             if (dlg.ShowDialog() == true)
             {
                 string selectedFileName = dlg.FileName;
+                currentOpenImagePath = selectedFileName;
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(selectedFileName);
                 bitmap.EndInit();
                 TarkovMap.Source = bitmap;
+                Save_CustomMap.IsEnabled = true;
             }
         }
 
         private void Exit_OnClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            if (SaveSettings())
+            {
+                this.Close();
+            }
         }
 
+        private void SaveMap_OnClick(object sender, RoutedEventArgs e) 
+        {
+            if (TarkovMap.Source == null) 
+            {
+                return;
+            }
+
+            System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
+            item.Header = currentOpenImagePath;
+            List_CustomMaps.Items.Add(item);
+            item.Click += this.ButtonClicked;
+
+            if (currentOpenImagePath != null)
+            {
+                _savedMaps.Add(currentOpenImagePath);
+            }
+           
+            EnableMapListIfNotEmpty();
+        }
+        
         private void Customs_OnClick(object sender, RoutedEventArgs e)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs.png", UriKind.Absolute));
@@ -200,6 +262,54 @@ namespace TarkovMapOverlay
         {
             minimizeKeybindItem.Header = "Press any key to set a keybind";
             toggleMinimizeKeybind = true;
+        }
+
+        private void EnableMapListIfNotEmpty()
+        {
+            if (List_CustomMaps.Items.Count != 0)
+            {
+                List_CustomMaps.IsEnabled = true;
+            }
+        }
+
+        private bool SaveSettings() 
+        {
+            if (!Directory.Exists("Settings"))
+            {
+                Directory.CreateDirectory("Settings");
+            }
+
+            SavedSettings settings = new SavedSettings();
+            settings.visual_opacity = this.Opacity;
+            settings.visual_transparency = transparentBackground;
+            if (TarkovMap.Source != null)
+            {
+                settings.currentMapPath = TarkovMap.Source.ToString();
+            }
+            else {
+                settings.currentMapPath = null;
+            }
+            settings.customMapList.AddRange(_savedMaps);
+
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fs = new FileStream("Settings/settings.sav", FileMode.Create);
+            bf.Serialize(fs, settings);
+            fs.Close();
+            return true;
+        }
+
+        private SavedSettings LoadSettings()
+        {
+            if (File.Exists("Settings/settings.sav")) {
+                FileStream fs = new FileStream("Settings/settings.sav", FileMode.Open);
+                BinaryFormatter bf = new BinaryFormatter();
+
+                SavedSettings settings = (SavedSettings)bf.Deserialize(fs);
+             
+                return settings;
+            }
+
+            return new SavedSettings();
         }
     }
 }
