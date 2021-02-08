@@ -33,12 +33,14 @@ namespace TarkovMapOverlay
         public MainWindow()
         {
             InitializeComponent();
+
             
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
-
+            
             //load SettingsFile if exists
             SavedSettings settings = LoadSettings();
+            
             //load keybinds
             minimizeKey = settings.minimizeKey;
             minimizeButton = settings.minimizeMousebutton;
@@ -46,8 +48,16 @@ namespace TarkovMapOverlay
             minimizeMouseButtonItem.Header = "_Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
             //load saved opacity
             sliderMenu.Value = settings.visual_opacity * 100;
+            //load saved windowState
+            this.Top = settings.windowTop;
+            this.Left = settings.windowLeft;
+            this.Height = settings.windowHeight;
+            this.Width = settings.windowWidth;
+            MoveIntoView();
             //load last opened Map if file exists
-            
+
+
+
             if (settings.currentMapPath != null)
             {
                 try
@@ -60,6 +70,7 @@ namespace TarkovMapOverlay
                     string error = "There was an error opening your last opened file. It will be removed from the selection";
                     System.Windows.Forms.MessageBox.Show(error,"",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Console.Error.WriteLine(e.Message);
                 }
             }
             //load saved transparency BG setting
@@ -341,6 +352,11 @@ namespace TarkovMapOverlay
             }
 
             SavedSettings settings = new SavedSettings();
+            settings.windowTop = this.Top;
+            settings.windowLeft = this.Left;
+            settings.windowHeight = this.Height;
+            settings.windowWidth = this.Width;
+
             settings.visual_opacity = this.Opacity;
             settings.visual_transparency = transparentBackground;
             if (TarkovMap.Source != null)
@@ -373,6 +389,40 @@ namespace TarkovMapOverlay
             }
 
             return new SavedSettings();
+        }
+
+        public void MoveIntoView() //important if saved WindowPosition is out of screenbounds ( if saved on 2.screen for example )
+        {
+           
+            double _windowTop = this.Top;
+            double _windowHeight = this.Height;
+            double _windowLeft = this.Left;
+            double _windowWidth = this.Width;
+            
+            if (_windowTop + _windowHeight / 2 > SystemParameters.VirtualScreenHeight)
+            {
+                _windowTop = SystemParameters.VirtualScreenHeight -_windowHeight;
+            }
+
+            if (_windowLeft + _windowWidth / 2 > SystemParameters.VirtualScreenWidth)
+            {
+                _windowLeft = SystemParameters.VirtualScreenWidth - _windowWidth;
+            }
+
+            if (_windowTop < 0)
+            {
+                _windowTop = 0;
+            }
+
+            if (_windowLeft < 0)
+            {
+                _windowLeft = 0;
+            }
+
+            this.Top = _windowTop;
+            this.Height = _windowHeight;
+            this.Left = _windowLeft;
+            this.Width = _windowWidth;
         }
     }
 }
