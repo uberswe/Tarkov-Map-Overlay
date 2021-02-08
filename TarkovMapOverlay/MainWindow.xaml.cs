@@ -27,6 +27,7 @@ namespace TarkovMapOverlay
         private MouseButtons minimizeButton = MouseButtons.Right;
         private bool toggleMinimizeKeybind = false;
         private bool toggleMinimizeMousebutton = false;
+        private bool canMinimizeWithMouse = false;
         private string currentOpenImagePath;
         private List<string> _savedMaps = new List<string>();
 
@@ -46,6 +47,7 @@ namespace TarkovMapOverlay
             minimizeKeybindItem.Header = "_Change " + minimizeKey.ToString() + " Keybind for minimizing";
             minimizeMouseButtonItem.IsEnabled = settings.minimizeWithMouseButton;
             minimizeWithMouseButtonItem.IsChecked = settings.minimizeWithMouseButton;
+            canMinimizeWithMouse = settings.minimizeWithMouseButton;
             minimizeMouseButtonItem.Header = "_Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
             //load saved opacity
             sliderMenu.Value = settings.visual_opacity * 100;
@@ -103,6 +105,11 @@ namespace TarkovMapOverlay
 
         private void ToogleVisibilityWithMouseButtons(object sender, MouseEventExtArgs e)
         {
+            if (!canMinimizeWithMouse)
+            {
+                return;
+            }
+
             if (toggleMinimizeMousebutton)
             {
                 if (e.Button == MouseButtons.Left) {
@@ -264,11 +271,13 @@ namespace TarkovMapOverlay
         private void minimizeWithMouseButtonItem_Checked(object sender, RoutedEventArgs e)
         {
             minimizeMouseButtonItem.IsEnabled = true;
+            canMinimizeWithMouse = true;
         }
 
         private void minimizeWithMouseButtonItem_Unchecked(object sender, RoutedEventArgs e)
         {
             minimizeMouseButtonItem.IsEnabled = false;
+            canMinimizeWithMouse = false;
         }
 
         private void Customs_OnClick(object sender, RoutedEventArgs e)
