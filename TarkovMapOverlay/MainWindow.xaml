@@ -6,12 +6,10 @@
         xmlns:local="clr-namespace:TarkovMapOverlay"
         xmlns:sliderMenu="clr-namespace:SliderMenu"
         mc:Ignorable="d"
-        Title="Tarkov Map Overlay" Height="450" Width="800" 
-        WindowStyle="None"
+        Title="Tarkov Map Overlay" Height="450" Width="800"
         BorderBrush="Black"
         BorderThickness="1"
-        Background="Black"
-        AllowsTransparency="True">
+        Background="Black" Topmost="True" WindowStyle="None" AllowsTransparency="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"
                       ResizeBorderThickness="3"
@@ -27,14 +25,23 @@
             <MenuItem Header="_Menu">
                 <MenuItem Header="_Maps">
                     <MenuItem Click="Customs_OnClick" Header="_Customs" />
+                    <MenuItem Click="Customs2_OnClick" Header="_Customs2" />
+                    <MenuItem Click="Customs_Dorms_OnClick" Header="_Customs Dorms" />
+                    <MenuItem Click="Customs_Stashes_OnClick" Header="_Customs Stashes" />
                     <MenuItem Click="Shoreline_OnClick" Header="_Shoreline" />
                     <MenuItem Click="Wooeds_OnClick" Header="_Woods" />
+                    <MenuItem Click="Woods_Stashes_OnClick" Header="_Woods Stashes" />
                     <MenuItem Click="Interchange_OnClick" Header="_Interchange" />
                     <MenuItem Click="Reserv_OnClick" Header="_Reserv" />
                     <MenuItem Click="Labs_OnClick" Header="_The Lab" />
                     <MenuItem Click="Factory_OnClick" Header="_Factory" />
                 </MenuItem>
+                <MenuItem Header="_Custom Maps" Name="List_CustomMaps" IsEnabled="False">
+                </MenuItem>
+                <Separator />
                 <MenuItem Click="Browse_OnClick" Header="_Browse" />
+                <MenuItem Name="Save_CustomMap" Click="SaveMap_OnClick" Header="_Save Current Map to Custom Maplist" IsEnabled="False" />
+                <Separator />
                 <MenuItem Header="_Opacity">
                     <sliderMenu:SliderMenuItem 
                         x:Name="sliderMenu" >
@@ -47,16 +54,17 @@
                         <MenuItem Header="70" sliderMenu:SliderMenuItem.Value="70" />
                         <MenuItem Header="80" sliderMenu:SliderMenuItem.Value="80" />
                         <MenuItem Header="90" sliderMenu:SliderMenuItem.Value="90" />
-                        <MenuItem  Header="100" sliderMenu:SliderMenuItem.Value="100" />
+                        <MenuItem Header="100" sliderMenu:SliderMenuItem.Value="100" />
                     </sliderMenu:SliderMenuItem>
                 </MenuItem>
                 <Separator />
                 <MenuItem Click="MinimizeKeybind_OnClick" Header="_Change M Keybind for minimizing" Name="minimizeKeybindItem" StaysOpenOnClick="True"/>
-                <MenuItem Checked="TransparentBackground_OnCheck" Unchecked="TransparentBackground_OnUncheck" Header="_Transparent Background" IsCheckable="True"/>
+                <MenuItem Click="MinimizeMousebutton_OnClick" Header="_Change MouseButton for minimizing" Name="minimizeMouseButtonItem" StaysOpenOnClick="True" />
+                <MenuItem Name="setting_transparency" Checked="TransparentBackground_OnCheck" Unchecked="TransparentBackground_OnUncheck" Header="_Transparent Background" IsCheckable="True"/>
                 <Separator />
-                <MenuItem Click="Exit_OnClick" Header="_Exit" />
+                <MenuItem Click="Exit_OnClick" Header="_Save and Exit" />
             </MenuItem>
         </Menu>
         <Image Grid.Row="2" Name="TarkovMap" Height="400" Width="400" />
-</Grid>
+    </Grid>
 </Window>
