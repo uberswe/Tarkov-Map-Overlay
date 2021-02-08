@@ -8,9 +8,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Controls;
-using System.Windows.Shell;
-using DragEventArgs = System.Windows.DragEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace TarkovMapOverlay
@@ -26,9 +23,12 @@ namespace TarkovMapOverlay
         private double opacity;
         private bool transparentBackground = false;
         private Keys minimizeKey = Keys.M;
+        private MouseButtons minimizeButton = MouseButtons.Right;
         private bool toggleMinimizeKeybind = false;
+        private bool toggleMinimizeMousebutton = false;
         private string currentOpenImagePath;
         private List<string> _savedMaps = new List<string>();
+
 
         public MainWindow()
         {
@@ -39,19 +39,37 @@ namespace TarkovMapOverlay
 
             //load SettingsFile if exists
             SavedSettings settings = LoadSettings();
+            //load keybinds
+            minimizeKey = settings.minimizeKey;
+            minimizeButton = settings.minimizeMousebutton;
+            minimizeKeybindItem.Header = "_Change " + minimizeKey.ToString() + " Keybind for minimizing";
+            minimizeMouseButtonItem.Header = "_Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
             //load saved opacity
             sliderMenu.Value = settings.visual_opacity * 100;
-            //load last opened Map
+            //load last opened Map if file exists
+            
             if (settings.currentMapPath != null)
             {
-                BitmapImage bitmap = new BitmapImage(new Uri(settings.currentMapPath, UriKind.RelativeOrAbsolute));
-                TarkovMap.Source = bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage(new Uri(settings.currentMapPath, UriKind.RelativeOrAbsolute));
+                    TarkovMap.Source = bitmap;
+                }
+                catch (Exception e) {
+                    Window win = new Window();
+                    string error = "There was an error opening your last opened file. It will be removed from the selection";
+                    System.Windows.Forms.MessageBox.Show(error,"",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             //load saved transparency BG setting
             setting_transparency.IsChecked = settings.visual_transparency;
             //load Custom MapList if Maps were Saved
             _savedMaps.AddRange(settings.customMapList);
             foreach (string MapName in settings.customMapList) {
+                if (!File.Exists(MapName)) {
+                    continue;
+                }
                 System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
                 item.Header = MapName;
                 item.Click += this.ButtonClicked;
@@ -63,9 +81,47 @@ namespace TarkovMapOverlay
             // Hooks to make the "M" key a keybind to toggle map
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
+
+
+            //Hooking to MouseEvents, but only if MouseCapturing is on
+            Hook.GlobalEvents().MouseDownExt += (sender, e) =>
+            {
+                if (e.Button != minimizeButton && !toggleMinimizeMousebutton)
+                {
+                    return;
+                }
+                    ToogleVisibilityWithMouseButtons(sender, e);   //toggle visibility if MouseButton is pressed 
+            };
         }
 
-        void ButtonClicked(object sender, RoutedEventArgs e) {
+        private void ToogleVisibilityWithMouseButtons(object sender, MouseEventExtArgs e)
+        {
+            if (toggleMinimizeMousebutton)
+            {
+                if (e.Button == MouseButtons.Left) {
+                    minimizeMouseButtonItem.Header = "Change MouseButton for minimizing";
+                    return;
+                }
+                minimizeButton = e.Button;
+                minimizeMouseButtonItem.Header = "Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
+                toggleMinimizeMousebutton = false;
+            }
+            else
+            {
+                if (this.WindowState == WindowState.Minimized)
+                {
+                    this.WindowState = WindowState.Normal;
+                    this.Topmost = true;
+                }
+                else
+                {
+                    this.WindowState = WindowState.Minimized;
+                }
+            }
+            
+        }
+
+         void ButtonClicked(object sender, RoutedEventArgs e) {
             System.Windows.Controls.MenuItem item = (System.Windows.Controls.MenuItem)sender;
             string selectedFileName = item.Header.ToString();
             currentOpenImagePath = selectedFileName;
@@ -263,6 +319,11 @@ namespace TarkovMapOverlay
             minimizeKeybindItem.Header = "Press any key to set a keybind";
             toggleMinimizeKeybind = true;
         }
+        private void MinimizeMousebutton_OnClick(object sender, RoutedEventArgs e)
+        {
+            minimizeMouseButtonItem.Header = "Press any Mousebutton except the left one";
+            toggleMinimizeMousebutton = true;
+        }
 
         private void EnableMapListIfNotEmpty()
         {
@@ -290,6 +351,8 @@ namespace TarkovMapOverlay
                 settings.currentMapPath = null;
             }
             settings.customMapList.AddRange(_savedMaps);
+            settings.minimizeKey = minimizeKey;
+            settings.minimizeMousebutton = minimizeButton;
 
             BinaryFormatter bf = new BinaryFormatter();
             FileStream fs = new FileStream("Settings/settings.sav", FileMode.Create);
@@ -305,7 +368,7 @@ namespace TarkovMapOverlay
                 BinaryFormatter bf = new BinaryFormatter();
 
                 SavedSettings settings = (SavedSettings)bf.Deserialize(fs);
-             
+
                 return settings;
             }
 

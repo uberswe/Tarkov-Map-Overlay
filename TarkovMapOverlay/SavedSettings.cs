@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Forms;
 using System.Collections.Generic;
 
 namespace TarkovMapOverlay
@@ -10,12 +12,16 @@ namespace TarkovMapOverlay
         public bool visual_transparency;
         public List<string> customMapList;
         public string currentMapPath;
+        public Keys minimizeKey;
+        public MouseButtons minimizeMousebutton;
 
         public SavedSettings() {
             this.visual_transparency = false;
             this.visual_opacity = 1;
             this.customMapList = new List<string>();
             this.currentMapPath = "";
+            this.minimizeKey = Keys.M;
+            this.minimizeMousebutton = MouseButtons.None;
         }
     }
 
