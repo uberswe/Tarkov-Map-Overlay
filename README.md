@@ -23,6 +23,6 @@ There is no reason to worry. This application is independent from the Escape Fro
 # Known issues and future plans
 
  - The window listens to click events when you look in your inventory or stash. This can be fixed later but it was too much work for the initial release.
- - Save the state so that the application remembers the last map you looked at and it's position and size.
+ - The application will only work as an overlay if Tarkov is running in windowed fullscreen mode
  
  I didn't make any of the maps, I included some maps from [the official Tarkov wiki](https://escapefromtarkov.gamepedia.com/Escape_from_Tarkov_Wiki) for convenience and I do not claim any rights to them nor do they fall under the License of this project.
