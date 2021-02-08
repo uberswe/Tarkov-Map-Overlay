@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using System.Windows.Controls;
 
 namespace TarkovMapOverlay
 {
@@ -34,13 +35,11 @@ namespace TarkovMapOverlay
         {
             InitializeComponent();
 
-            
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
             
             //load SettingsFile if exists
             SavedSettings settings = LoadSettings();
-            
             //load keybinds
             minimizeKey = settings.minimizeKey;
             minimizeButton = settings.minimizeMousebutton;
@@ -55,9 +54,6 @@ namespace TarkovMapOverlay
             this.Width = settings.windowWidth;
             MoveIntoView();
             //load last opened Map if file exists
-
-
-
             if (settings.currentMapPath != null)
             {
                 try
@@ -86,15 +82,13 @@ namespace TarkovMapOverlay
                 item.Click += this.ButtonClicked;
                 List_CustomMaps.Items.Add(item);
             }
-
             EnableMapListIfNotEmpty();
 
             // Hooks to make the "M" key a keybind to toggle map
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
 
-
-            //Hooking to MouseEvents, but only if MouseCapturing is on
+            //Hooking to MouseEvents
             Hook.GlobalEvents().MouseDownExt += (sender, e) =>
             {
                 if (e.Button != minimizeButton && !toggleMinimizeMousebutton)
@@ -142,7 +136,7 @@ namespace TarkovMapOverlay
             bitmap.EndInit();
             TarkovMap.Source = bitmap;
         }
-
+        
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             // This ensures that the image changes size when we resize the window
@@ -359,6 +353,7 @@ namespace TarkovMapOverlay
 
             settings.visual_opacity = this.Opacity;
             settings.visual_transparency = transparentBackground;
+
             if (TarkovMap.Source != null)
             {
                 settings.currentMapPath = TarkovMap.Source.ToString();
@@ -366,6 +361,7 @@ namespace TarkovMapOverlay
             else {
                 settings.currentMapPath = null;
             }
+
             settings.customMapList.AddRange(_savedMaps);
             settings.minimizeKey = minimizeKey;
             settings.minimizeMousebutton = minimizeButton;
@@ -393,7 +389,6 @@ namespace TarkovMapOverlay
 
         public void MoveIntoView() //important if saved WindowPosition is out of screenbounds ( if saved on 2.screen for example )
         {
-           
             double _windowTop = this.Top;
             double _windowHeight = this.Height;
             double _windowLeft = this.Left;
@@ -424,5 +419,35 @@ namespace TarkovMapOverlay
             this.Left = _windowLeft;
             this.Width = _windowWidth;
         }
+
+        /*
+        private void TarkovMap_Loaded(object sender, RoutedEventArgs e)
+        {
+            TarkovMap.Stretch = Stretch.None;
+            BitmapImage bmpImage = new BitmapImage();
+
+            bmpImage.BeginInit();
+           
+            bmpImage.UriSource = new Uri(TarkovMap.Source.ToString());
+
+            bmpImage.EndInit();
+
+            // Properties must be set between BeginInit and EndInit
+
+            TransformedBitmap transformBmp = new TransformedBitmap();
+            transformBmp.BeginInit();
+            transformBmp.Source = bmpImage;
+
+            //transformations
+            ScaleTransform transform = new ScaleTransform(2.00, 2.00);
+
+            transformBmp.Transform = transform;
+            transformBmp.EndInit();
+
+            // Set Image.Source to TransformedBitmap
+
+            TarkovMap.Source = transformBmp;
+        }
+        */
     }
 }
