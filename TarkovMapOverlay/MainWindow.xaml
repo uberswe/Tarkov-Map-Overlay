@@ -25,8 +25,12 @@
             <MenuItem Header="_Menu">
                 <MenuItem Header="_Maps">
                     <MenuItem Click="Customs_OnClick" Header="_Customs" />
+                    <MenuItem Click="Customs2_OnClick" Header="_Customs2" />
+                    <MenuItem Click="Customs_Dorms_OnClick" Header="_Customs Dorms" />
+                    <MenuItem Click="Customs_Stashes_OnClick" Header="_Customs Stashes" />
                     <MenuItem Click="Shoreline_OnClick" Header="_Shoreline" />
                     <MenuItem Click="Wooeds_OnClick" Header="_Woods" />
+                    <MenuItem Click="Woods_Stashes_OnClick" Header="_Woods Stashes" />
                     <MenuItem Click="Interchange_OnClick" Header="_Interchange" />
                     <MenuItem Click="Reserv_OnClick" Header="_Reserv" />
                     <MenuItem Click="Labs_OnClick" Header="_The Lab" />

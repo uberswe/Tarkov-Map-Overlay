@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SavedSettings.cs" />
     <Compile Include="SliderMenuItem.xaml.cs">
       <DependentUpon>SliderMenuItem.xaml</DependentUpon>
     </Compile>
@@ -108,6 +109,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Resource Include="Resources\Customs_Dorms.jpeg" />
+    <Resource Include="Resources\Customs_Stashes.jpeg" />
+    <Resource Include="Resources\Customs2.jpeg" />
+    <Resource Include="Resources\Woods_Stashes.jpeg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Customs.png" />

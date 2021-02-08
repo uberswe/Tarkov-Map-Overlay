@@ -58,7 +58,7 @@ namespace TarkovMapOverlay
             {
                 try
                 {
-                    BitmapImage bitmap = new BitmapImage(new Uri(settings.currentMapPath, UriKind.RelativeOrAbsolute));
+                    BitmapImage bitmap = new BitmapImage(new Uri(settings.currentMapPath, uriKind: UriKind.RelativeOrAbsolute));
                     TarkovMap.Source = bitmap;
                 }
                 catch (Exception e) {
@@ -265,6 +265,24 @@ namespace TarkovMapOverlay
             TarkovMap.Source = bitmap;
         }
 
+        private void Customs2_OnClick(object sender, RoutedEventArgs e)
+        {
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs2.jpeg", UriKind.Absolute));
+            TarkovMap.Source = bitmap;
+        }
+
+        private void Customs_Dorms_OnClick(object sender, RoutedEventArgs e)
+        {
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs_Dorms.jpeg", UriKind.Absolute));
+            TarkovMap.Source = bitmap;
+        }
+
+        private void Customs_Stashes_OnClick(object sender, RoutedEventArgs e)
+        {
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs_Stashes.jpeg", UriKind.Absolute));
+            TarkovMap.Source = bitmap;
+        }
+
         private void Factory_OnClick(object sender, RoutedEventArgs e)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Factory.jpg", UriKind.Absolute));
@@ -298,6 +316,12 @@ namespace TarkovMapOverlay
         private void Wooeds_OnClick(object sender, RoutedEventArgs e)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods.jpg", UriKind.Absolute));
+            TarkovMap.Source = bitmap;
+        }
+
+        private void Woods_Stashes_OnClick(object sender, RoutedEventArgs e)
+        {
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods_Stashes.jpeg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
@@ -419,35 +443,5 @@ namespace TarkovMapOverlay
             this.Left = _windowLeft;
             this.Width = _windowWidth;
         }
-
-        /*
-        private void TarkovMap_Loaded(object sender, RoutedEventArgs e)
-        {
-            TarkovMap.Stretch = Stretch.None;
-            BitmapImage bmpImage = new BitmapImage();
-
-            bmpImage.BeginInit();
-           
-            bmpImage.UriSource = new Uri(TarkovMap.Source.ToString());
-
-            bmpImage.EndInit();
-
-            // Properties must be set between BeginInit and EndInit
-
-            TransformedBitmap transformBmp = new TransformedBitmap();
-            transformBmp.BeginInit();
-            transformBmp.Source = bmpImage;
-
-            //transformations
-            ScaleTransform transform = new ScaleTransform(2.00, 2.00);
-
-            transformBmp.Transform = transform;
-            transformBmp.EndInit();
-
-            // Set Image.Source to TransformedBitmap
-
-            TarkovMap.Source = transformBmp;
-        }
-        */
     }
 }
