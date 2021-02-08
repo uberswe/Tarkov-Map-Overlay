@@ -44,6 +44,8 @@ namespace TarkovMapOverlay
             minimizeKey = settings.minimizeKey;
             minimizeButton = settings.minimizeMousebutton;
             minimizeKeybindItem.Header = "_Change " + minimizeKey.ToString() + " Keybind for minimizing";
+            minimizeMouseButtonItem.IsEnabled = settings.minimizeWithMouseButton;
+            minimizeWithMouseButtonItem.IsChecked = settings.minimizeWithMouseButton;
             minimizeMouseButtonItem.Header = "_Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
             //load saved opacity
             sliderMenu.Value = settings.visual_opacity * 100;
@@ -258,7 +260,17 @@ namespace TarkovMapOverlay
            
             EnableMapListIfNotEmpty();
         }
-        
+
+        private void minimizeWithMouseButtonItem_Checked(object sender, RoutedEventArgs e)
+        {
+            minimizeMouseButtonItem.IsEnabled = true;
+        }
+
+        private void minimizeWithMouseButtonItem_Unchecked(object sender, RoutedEventArgs e)
+        {
+            minimizeMouseButtonItem.IsEnabled = false;
+        }
+
         private void Customs_OnClick(object sender, RoutedEventArgs e)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs.png", UriKind.Absolute));
@@ -387,6 +399,7 @@ namespace TarkovMapOverlay
             }
 
             settings.customMapList.AddRange(_savedMaps);
+            settings.minimizeWithMouseButton = minimizeWithMouseButtonItem.IsChecked;
             settings.minimizeKey = minimizeKey;
             settings.minimizeMousebutton = minimizeButton;
 

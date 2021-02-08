@@ -60,6 +60,7 @@
                 <Separator />
                 <MenuItem Click="MinimizeKeybind_OnClick" Header="_Change M Keybind for minimizing" Name="minimizeKeybindItem" StaysOpenOnClick="True"/>
                 <MenuItem Click="MinimizeMousebutton_OnClick" Header="_Change MouseButton for minimizing" Name="minimizeMouseButtonItem" StaysOpenOnClick="True" />
+                <MenuItem Checked="minimizeWithMouseButtonItem_Checked" IsCheckable="True" Unchecked="minimizeWithMouseButtonItem_Unchecked" IsChecked="True" Header="_Minimize with MouseBind" Name="minimizeWithMouseButtonItem" StaysOpenOnClick="True" />
                 <MenuItem Name="setting_transparency" Checked="TransparentBackground_OnCheck" Unchecked="TransparentBackground_OnUncheck" Header="_Transparent Background" IsCheckable="True"/>
                 <Separator />
                 <MenuItem Click="Exit_OnClick" Header="_Save and Exit" />
