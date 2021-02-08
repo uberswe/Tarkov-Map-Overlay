@@ -12,6 +12,10 @@ A simple application to show you a map while playing Tarkov. Check the [Releases
  - https://twitter.com/uberswe
  - https://twitch.tv/uberswe
 
+# A Special Thanks To Others Who Helped Contribute
+
+[@eMKey1988](https://github.com/eMKey1988)
+
 # Install
 
 Download and run the .exe file, there is no installation needed. it will show a window which is always on top. Use the menu to select a map, browse for a png/jpg file and change the window opacity. Use the "M" key on your keyboard to minimize and show the window when needed.
