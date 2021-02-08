@@ -91,7 +91,7 @@ namespace TarkovMapOverlay
             // Hooks to make the "M" key a keybind to toggle map
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
-
+            
             //Hooking to MouseEvents
             Hook.GlobalEvents().MouseDownExt += (sender, e) =>
             {
@@ -122,17 +122,17 @@ namespace TarkovMapOverlay
             }
             else
             {
-                if (this.WindowState == WindowState.Minimized)
+                if (this.Visibility == Visibility.Collapsed)
                 {
-                    this.WindowState = WindowState.Normal;
-                    this.Topmost = true;
+                    this.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    this.WindowState = WindowState.Minimized;
+                    this.Visibility = Visibility.Collapsed;
                 }
-            }
-            
+                this.Topmost = true;
+                this.Focus();
+            }  
         }
 
          void ButtonClicked(object sender, RoutedEventArgs e) {
@@ -208,15 +208,16 @@ namespace TarkovMapOverlay
             } 
             else if (e.KeyCode == minimizeKey) // Toggle minimizing of map with a keybing
             {
-                if (this.WindowState == WindowState.Minimized)
+                if (this.Visibility == Visibility.Collapsed)
                 {
-                    this.WindowState = WindowState.Normal;
-                    this.Topmost = true;
+                    this.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    this.WindowState = WindowState.Minimized;
+                    this.Visibility = Visibility.Collapsed;
                 }
+                this.Topmost = true;
+                this.Focus();
             }
         }
 

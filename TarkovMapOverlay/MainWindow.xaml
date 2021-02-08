@@ -9,7 +9,7 @@
         Title="Tarkov Map Overlay" Height="450" Width="800"
         BorderBrush="Black"
         BorderThickness="1"
-        Background="Black" Topmost="True" WindowStyle="None" AllowsTransparency="True">
+        Background="Black" Topmost="True" WindowStartupLocation="Manual" Visibility="Visible" AllowsTransparency="True" WindowStyle="None">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"
                       ResizeBorderThickness="3"
