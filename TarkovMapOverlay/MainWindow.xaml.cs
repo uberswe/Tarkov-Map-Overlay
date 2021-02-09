@@ -10,6 +10,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace TarkovMapOverlay
 {
@@ -22,6 +24,8 @@ namespace TarkovMapOverlay
         private IKeyboardMouseEvents m_GlobalHook;
         private Point startPoint;
         private double opacity;
+        private Point origin; //var for zoom and pan
+        private Point start; //var for zoom and pan
         private bool transparentBackground = false;
         private Keys minimizeKey = Keys.M;
         private MouseButtons minimizeButton = MouseButtons.Right;
@@ -30,6 +34,7 @@ namespace TarkovMapOverlay
         private bool canMinimizeWithMouse = false;
         private string currentOpenImagePath;
         private List<string> _savedMaps = new List<string>();
+        private Image image;
 
 
         public MainWindow()
@@ -87,6 +92,17 @@ namespace TarkovMapOverlay
                 List_CustomMaps.Items.Add(item);
             }
             EnableMapListIfNotEmpty();
+
+            //hooking MouseEvents to Imagecontainer for zoom and pan
+            image = TarkovMap;
+            WPFWindow.MouseWheel += MainWindow_MouseWheel;
+            
+            var prop = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof(Image));
+            prop.AddValueChanged(image, SourceChangedHandler);
+            
+            image.MouseLeftButtonDown += image_MouseLeftButtonDown;
+            image.MouseLeftButtonUp += image_MouseLeftButtonUp;
+            image.MouseMove += image_MouseMove;
 
             // Hooks to make the "M" key a keybind to toggle map
             m_GlobalHook = Hook.GlobalEvents();
@@ -193,6 +209,10 @@ namespace TarkovMapOverlay
                  Math.Abs(currentPoint.Y - startPoint.Y) >
                  SystemParameters.MinimumVerticalDragDistance))
             {
+                if (image.IsMouseCaptured)
+                {
+                    return;
+                }
                 this.DragMove();
             }
         }
@@ -243,10 +263,12 @@ namespace TarkovMapOverlay
 
         private void Exit_OnClick(object sender, RoutedEventArgs e)
         {
-            if (SaveSettings())
-            {
-                this.Close();
-            }
+            this.Close();
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            SaveSettings();
+            base.OnClosing(e);
         }
 
         private void SaveMap_OnClick(object sender, RoutedEventArgs e) 
@@ -465,6 +487,54 @@ namespace TarkovMapOverlay
             this.Height = _windowHeight;
             this.Left = _windowLeft;
             this.Width = _windowWidth;
+        }
+
+        private void image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            image.ReleaseMouseCapture();
+        }
+
+        private void image_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!image.IsMouseCaptured) {
+                return;
+            }
+            
+            Point p = e.MouseDevice.GetPosition(border);
+
+            Matrix m = image.RenderTransform.Value;
+            m.OffsetX = origin.X + (p.X - start.X);
+            m.OffsetY = origin.Y + (p.Y - start.Y);
+
+            image.RenderTransform = new MatrixTransform(m);
+        }
+
+        private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (image.IsMouseCaptured) return;
+            image.CaptureMouse();
+
+            start = e.GetPosition(border);
+            origin.X = image.RenderTransform.Value.OffsetX;
+            origin.Y = image.RenderTransform.Value.OffsetY;
+        }
+
+        private void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            Point p = e.MouseDevice.GetPosition(image);
+
+            Matrix m = image.RenderTransform.Value;
+            if (e.Delta > 0)
+                m.ScaleAtPrepend(1.1, 1.1, p.X, p.Y);
+            else
+                m.ScaleAtPrepend(1 / 1.1, 1 / 1.1, p.X, p.Y);
+
+            image.RenderTransform = new MatrixTransform(m);
+        }
+
+        void SourceChangedHandler(object sender, EventArgs e)
+        {
+            image.RenderTransform = new MatrixTransform();
         }
     }
 }
