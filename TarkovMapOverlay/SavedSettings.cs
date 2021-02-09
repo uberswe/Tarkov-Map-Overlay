@@ -17,6 +17,7 @@ namespace TarkovMapOverlay
         public string currentMapPath;
         public Keys minimizeKey;
         public MouseButtons minimizeMousebutton;
+        public bool minimizeWithMouseButton;
 
         public SavedSettings() 
         {
@@ -31,6 +32,7 @@ namespace TarkovMapOverlay
             this.currentMapPath = "";
             this.minimizeKey = Keys.M;
             this.minimizeMousebutton = MouseButtons.None;
+            this.minimizeWithMouseButton = false;
         }
     }
 
