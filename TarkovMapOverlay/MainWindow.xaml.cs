@@ -547,7 +547,14 @@ namespace TarkovMapOverlay
             this.BorderBrush = new SolidColorBrush(Colors.Black) { Opacity = 0 };
             transparentBackground = true;
 
-            this.WindowState = WindowState.Maximized;
+            if (this.WindowState == WindowState.Normal)
+            {
+                this.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+            }
         }
     }
 }
