@@ -553,6 +553,7 @@ namespace TarkovMapOverlay
             }
             else
             {
+                image.RenderTransform = new MatrixTransform();
                 this.WindowState = WindowState.Normal;
             }
         }
