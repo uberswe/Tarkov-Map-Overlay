@@ -11,7 +11,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
 using System.ComponentModel;
-using System.Windows.Data;
 
 namespace TarkovMapOverlay
 {
@@ -78,7 +77,8 @@ namespace TarkovMapOverlay
                     Console.Error.WriteLine(e.Message);
                 }
             }
-            //load saved transparency BG setting
+            //load saved transparency BG setting and WindowState
+            this.WindowState = settings.lastWindowState;
             setting_transparency.IsChecked = settings.visual_transparency;
             //load Custom MapList if Maps were Saved
             _savedMaps.AddRange(settings.customMapList);
@@ -419,6 +419,7 @@ namespace TarkovMapOverlay
             settings.windowHeight = this.Height;
             settings.windowWidth = this.Width;
 
+            settings.lastWindowState = this.WindowState;
             settings.visual_opacity = this.Opacity;
             settings.visual_transparency = transparentBackground;
 
@@ -535,6 +536,18 @@ namespace TarkovMapOverlay
         void SourceChangedHandler(object sender, EventArgs e)
         {
             image.RenderTransform = new MatrixTransform();
+        }
+
+        private void MenuItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            setting_transparency.IsChecked = true;
+            opacity = sliderMenu.Value;
+            this.Background = new SolidColorBrush(Colors.Black) { Opacity = 0 };
+            this.Opacity = opacity * 0.01;
+            this.BorderBrush = new SolidColorBrush(Colors.Black) { Opacity = 0 };
+            transparentBackground = true;
+
+            this.WindowState = WindowState.Maximized;
         }
     }
 }

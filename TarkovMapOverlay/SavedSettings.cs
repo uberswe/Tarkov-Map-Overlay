@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace TarkovMapOverlay
 {
@@ -10,6 +11,7 @@ namespace TarkovMapOverlay
         public double windowLeft;
         public double windowWidth;
         public double windowHeight;
+        public WindowState lastWindowState;
 
         public double visual_opacity;
         public bool visual_transparency;
@@ -33,6 +35,7 @@ namespace TarkovMapOverlay
             this.minimizeKey = Keys.M;
             this.minimizeMousebutton = MouseButtons.None;
             this.minimizeWithMouseButton = false;
+            this.lastWindowState = WindowState.Normal;
         }
     }
 

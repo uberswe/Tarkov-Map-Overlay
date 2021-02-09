@@ -23,7 +23,7 @@
             <RowDefinition Height="26*"/>
         </Grid.RowDefinitions>
         <Menu x:Name="Menu" Grid.Row="1" Grid.ZIndex="1000" Height="18" Width="45" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <MenuItem Header="_Menu">
+            <MenuItem Header="_Menu" MouseDoubleClick="MenuItem_MouseDoubleClick">
                 <MenuItem Header="_Maps">
                     <MenuItem Click="Customs_OnClick" Header="_Customs" />
                     <MenuItem Click="Customs2_OnClick" Header="_Customs2" />
