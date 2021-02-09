@@ -10,6 +10,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace TarkovMapOverlay
 {
@@ -94,6 +96,10 @@ namespace TarkovMapOverlay
             //hooking MouseEvents to Imagecontainer for zoom and pan
             image = TarkovMap;
             WPFWindow.MouseWheel += MainWindow_MouseWheel;
+            
+            var prop = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof(Image));
+            prop.AddValueChanged(image, SourceChangedHandler);
+            
             image.MouseLeftButtonDown += image_MouseLeftButtonDown;
             image.MouseLeftButtonUp += image_MouseLeftButtonUp;
             image.MouseMove += image_MouseMove;
@@ -257,10 +263,12 @@ namespace TarkovMapOverlay
 
         private void Exit_OnClick(object sender, RoutedEventArgs e)
         {
-            if (SaveSettings())
-            {
-                this.Close();
-            }
+            this.Close();
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            SaveSettings();
+            base.OnClosing(e);
         }
 
         private void SaveMap_OnClick(object sender, RoutedEventArgs e) 
@@ -522,6 +530,11 @@ namespace TarkovMapOverlay
                 m.ScaleAtPrepend(1 / 1.1, 1 / 1.1, p.X, p.Y);
 
             image.RenderTransform = new MatrixTransform(m);
+        }
+
+        void SourceChangedHandler(object sender, EventArgs e)
+        {
+            image.RenderTransform = new MatrixTransform();
         }
     }
 }
