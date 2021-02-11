@@ -22,10 +22,13 @@ namespace TarkovMapOverlay
         public const int WS_EX_TRANSPARENT = 0x00000020;
         public const int GWL_EXSTYLE = (-20);
         private int extendedStyle;
+
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hwnd, int index);
+
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
+
         private IKeyboardMouseEvents m_GlobalHook;
         private Point startPoint;
         private double opacity;
@@ -46,7 +49,7 @@ namespace TarkovMapOverlay
         public MainWindow()
         {
             InitializeComponent();
-            
+
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
 
@@ -57,10 +60,10 @@ namespace TarkovMapOverlay
             //hooking MouseEvents to Imagecontainer for zoom and pan
             image = TarkovMap;
             WPFWindow.MouseWheel += MainWindow_MouseWheel;
-            
+
             var prop = DependencyPropertyDescriptor.FromProperty(Image.SourceProperty, typeof(Image));
             prop.AddValueChanged(image, SourceChangedHandler);
-            
+
             image.MouseLeftButtonDown += image_MouseLeftButtonDown;
             image.MouseLeftButtonUp += image_MouseLeftButtonUp;
             image.MouseMove += image_MouseMove;
@@ -68,7 +71,7 @@ namespace TarkovMapOverlay
             // Hooks to make the "M" key a keybind to toggle map
             m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += GlobalHookKeyDown;
-            
+
             //Hooking to MouseEvents
             Hook.GlobalEvents().MouseDownExt += (sender, e) =>
             {
@@ -76,7 +79,8 @@ namespace TarkovMapOverlay
                 {
                     return;
                 }
-                    ToogleVisibilityWithMouseButtons(sender, e);   //toggle visibility if MouseButton is pressed 
+
+                ToogleVisibilityWithMouseButtons(sender, e); //toggle visibility if MouseButton is pressed 
             };
         }
 
@@ -89,10 +93,12 @@ namespace TarkovMapOverlay
 
             if (toggleMinimizeMousebutton)
             {
-                if (e.Button == MouseButtons.Left) {
+                if (e.Button == MouseButtons.Left)
+                {
                     minimizeMouseButtonItem.Header = "Change MouseButton for minimizing";
                     return;
                 }
+
                 minimizeButton = e.Button;
                 minimizeMouseButtonItem.Header = "Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
                 toggleMinimizeMousebutton = false;
@@ -107,13 +113,15 @@ namespace TarkovMapOverlay
                 {
                     this.Visibility = Visibility.Collapsed;
                 }
+
                 this.Topmost = true;
                 this.Focus();
-            }  
+            }
         }
 
-         void ButtonClicked(object sender, RoutedEventArgs e) {
-            System.Windows.Controls.MenuItem item = (System.Windows.Controls.MenuItem)sender;
+        void ButtonClicked(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem item = (System.Windows.Controls.MenuItem) sender;
             string selectedFileName = item.Header.ToString();
             currentOpenImagePath = selectedFileName;
             BitmapImage bitmap = new BitmapImage();
@@ -122,7 +130,7 @@ namespace TarkovMapOverlay
             bitmap.EndInit();
             TarkovMap.Source = bitmap;
         }
-        
+
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             // This ensures that the image changes size when we resize the window
@@ -156,7 +164,7 @@ namespace TarkovMapOverlay
                 else
                 {
                     this.Opacity = opacity * 0.01;
-                    this.Background = new SolidColorBrush(Colors.Black) { Opacity = opacity * 0.01 };
+                    this.Background = new SolidColorBrush(Colors.Black) {Opacity = opacity * 0.01};
                 }
             }
 
@@ -174,6 +182,7 @@ namespace TarkovMapOverlay
                 {
                     return;
                 }
+
                 this.DragMove();
             }
         }
@@ -197,6 +206,7 @@ namespace TarkovMapOverlay
                 {
                     this.Visibility = Visibility.Collapsed;
                 }
+
                 this.Topmost = true;
                 this.Focus();
             }
@@ -207,7 +217,7 @@ namespace TarkovMapOverlay
         }
 
         private void Browse_OnClick(object sender, RoutedEventArgs e)
-        { 
+        {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.InitialDirectory = "c:\\";
             dlg.Filter = "Image files|*.jpg;*.png;|All Files (*.*)|*.*";
@@ -230,15 +240,16 @@ namespace TarkovMapOverlay
         {
             this.Close();
         }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             SaveSettings();
             base.OnClosing(e);
         }
 
-        private void SaveMap_OnClick(object sender, RoutedEventArgs e) 
+        private void SaveMap_OnClick(object sender, RoutedEventArgs e)
         {
-            if (TarkovMap.Source == null) 
+            if (TarkovMap.Source == null)
             {
                 return;
             }
@@ -252,7 +263,7 @@ namespace TarkovMapOverlay
             {
                 _savedMaps.Add(currentOpenImagePath);
             }
-           
+
             EnableMapListIfNotEmpty();
         }
 
@@ -270,74 +281,85 @@ namespace TarkovMapOverlay
 
         private void Customs_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs.png", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs.png", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Customs2_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs2.jpeg", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs2.jpeg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Customs_Dorms_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs_Dorms.jpeg", UriKind.Absolute));
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs_Dorms.jpeg",
+                UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Customs_Stashes_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs_Stashes.jpeg", UriKind.Absolute));
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Customs_Stashes.jpeg",
+                UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Factory_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Factory.jpg", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Factory.jpg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Interchange_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Interchange.jpg", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Interchange.jpg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Labs_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Labs.png", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Labs.png", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Reserv_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Reserv.png", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Reserv.png", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Shoreline_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Shoreline.jpg", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Shoreline.jpg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Wooeds_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods.jpg", UriKind.Absolute));
+            BitmapImage bitmap =
+                new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods.jpg", UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void Woods_Stashes_OnClick(object sender, RoutedEventArgs e)
         {
-            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods_Stashes.jpeg", UriKind.Absolute));
+            BitmapImage bitmap = new BitmapImage(new Uri(@"pack://application:,,,/Resources/Woods_Stashes.jpeg",
+                UriKind.Absolute));
             TarkovMap.Source = bitmap;
         }
 
         private void TransparentBackground_OnCheck(object sender, RoutedEventArgs e)
         {
             opacity = sliderMenu.Value;
-            this.Background = new SolidColorBrush(Colors.Black) { Opacity = 0 };
+            this.Background = new SolidColorBrush(Colors.Black) {Opacity = 0};
             this.Opacity = opacity * 0.01;
             this.BorderBrush = new SolidColorBrush(Colors.Black) {Opacity = 0};
             transparentBackground = true;
@@ -346,9 +368,9 @@ namespace TarkovMapOverlay
         private void TransparentBackground_OnUncheck(object sender, RoutedEventArgs e)
         {
             opacity = sliderMenu.Value;
-            this.Background = new SolidColorBrush(Colors.Black) { Opacity = 1 };
+            this.Background = new SolidColorBrush(Colors.Black) {Opacity = 1};
             this.Opacity = opacity * 0.01;
-            this.BorderBrush = new SolidColorBrush(Colors.Black) { Opacity = 1 };
+            this.BorderBrush = new SolidColorBrush(Colors.Black) {Opacity = 1};
             transparentBackground = false;
         }
 
@@ -357,6 +379,7 @@ namespace TarkovMapOverlay
             minimizeKeybindItem.Header = "Press any key to set a keybind";
             toggleMinimizeKeybind = true;
         }
+
         private void MinimizeMousebutton_OnClick(object sender, RoutedEventArgs e)
         {
             minimizeMouseButtonItem.Header = "Press any Mousebutton except the left one";
@@ -371,7 +394,7 @@ namespace TarkovMapOverlay
             }
         }
 
-        private bool SaveSettings() 
+        private bool SaveSettings()
         {
             //new saveCode
             Properties.Settings.Default.windowTop = this.Top;
@@ -390,11 +413,14 @@ namespace TarkovMapOverlay
                 Properties.Settings.Default.currentMapPath = null;
             }
 
-            foreach (string MapListItem in _savedMaps) {
-                if ( !Properties.Settings.Default.customMapList.Contains(MapListItem) ){
+            foreach (string MapListItem in _savedMaps)
+            {
+                if (!Properties.Settings.Default.customMapList.Contains(MapListItem))
+                {
                     Properties.Settings.Default.customMapList.Add(MapListItem);
                 }
             }
+
             Properties.Settings.Default.minimizeWithMouseButton = minimizeWithMouseButtonItem.IsChecked;
             Properties.Settings.Default.minimizeKey = minimizeKey;
             Properties.Settings.Default.minimizeMousebutton = minimizeButton;
@@ -429,15 +455,17 @@ namespace TarkovMapOverlay
             {
                 try
                 {
-                    BitmapImage bitmap = new BitmapImage(new Uri(Properties.Settings.Default.currentMapPath, uriKind: UriKind.RelativeOrAbsolute));
+                    BitmapImage bitmap = new BitmapImage(new Uri(Properties.Settings.Default.currentMapPath,
+                        uriKind: UriKind.RelativeOrAbsolute));
                     TarkovMap.Source = bitmap;
                 }
                 catch (Exception e)
                 {
                     Window win = new Window();
-                    string error = "There was an error opening your last opened file. It will be removed from the selection";
+                    string error =
+                        "There was an error opening your last opened file. It will be removed from the selection";
                     System.Windows.Forms.MessageBox.Show(error, "",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Console.Error.WriteLine(e.Message);
                 }
             }
@@ -458,6 +486,7 @@ namespace TarkovMapOverlay
                 {
                     continue;
                 }
+
                 System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
                 item.Header = MapName;
                 item.Click += this.ButtonClicked;
@@ -465,16 +494,17 @@ namespace TarkovMapOverlay
             }
         }
 
-        public void MoveIntoView() //important if saved WindowPosition is out of screenbounds ( if saved on 2.screen for example )
+        public void
+            MoveIntoView() //important if saved WindowPosition is out of screenbounds ( if saved on 2.screen for example )
         {
             double _windowTop = this.Top;
             double _windowHeight = this.Height;
             double _windowLeft = this.Left;
             double _windowWidth = this.Width;
-            
+
             if (_windowTop + _windowHeight / 2 > SystemParameters.VirtualScreenHeight)
             {
-                _windowTop = SystemParameters.VirtualScreenHeight -_windowHeight;
+                _windowTop = SystemParameters.VirtualScreenHeight - _windowHeight;
             }
 
             if (_windowLeft + _windowWidth / 2 > SystemParameters.VirtualScreenWidth)
@@ -505,10 +535,11 @@ namespace TarkovMapOverlay
 
         private void image_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!image.IsMouseCaptured) {
+            if (!image.IsMouseCaptured)
+            {
                 return;
             }
-            
+
             Point p = e.MouseDevice.GetPosition(border);
 
             Matrix m = image.RenderTransform.Value;
@@ -544,7 +575,8 @@ namespace TarkovMapOverlay
         private void SourceChangedHandler(object sender, EventArgs e)
         {
             {
-                image.RenderTransform = new MatrixTransform(); image.RenderTransform = new MatrixTransform();
+                image.RenderTransform = new MatrixTransform();
+                image.RenderTransform = new MatrixTransform();
             }
         }
 
@@ -568,35 +600,5 @@ namespace TarkovMapOverlay
             IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle);
         }
-
-        private void ToggleClickThroughWithKey() {
-            setting_clickThrough.IsChecked = !setting_clickThrough.IsChecked;
-        }
-
-        private void ClickThrough_OnCheck(object sender, RoutedEventArgs e) {
-            // Get this window's handle         
-            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-            // Change the extended window style to include WS_EX_TRANSPARENT         
-            extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-
-            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
-        }
-
-        private void ClickThrough_OnUncheck(object sender, RoutedEventArgs e)
-        {
-            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle);
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-        }
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int GetWindowLong(IntPtr hwnd, int index);
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
     }
 }
