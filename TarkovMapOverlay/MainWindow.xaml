@@ -1,4 +1,4 @@
-﻿<Window x:Class="TarkovMapOverlay.MainWindow"
+<Window x:Class="TarkovMapOverlay.MainWindow"
         x:Name="WPFWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

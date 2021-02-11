@@ -1,4 +1,4 @@
-﻿using Gma.System.MouseKeyHook;
+using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -21,7 +21,6 @@ namespace TarkovMapOverlay
     {
         public const int WS_EX_TRANSPARENT = 0x00000020;
         public const int GWL_EXSTYLE = (-20);
-
         private int extendedStyle;
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hwnd, int index);
@@ -187,7 +186,7 @@ namespace TarkovMapOverlay
                 minimizeKey = e.KeyCode;
                 minimizeKeybindItem.Header = "Change " + e.KeyCode.ToString() + " Keybind for minimizing";
                 toggleMinimizeKeybind = false;
-            } 
+            }
             else if (e.KeyCode == minimizeKey) // Toggle minimizing of map with a keybing
             {
                 if (this.Visibility == Visibility.Collapsed)
@@ -569,5 +568,35 @@ namespace TarkovMapOverlay
             IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle);
         }
+
+        private void ToggleClickThroughWithKey() {
+            setting_clickThrough.IsChecked = !setting_clickThrough.IsChecked;
+        }
+
+        private void ClickThrough_OnCheck(object sender, RoutedEventArgs e) {
+            // Get this window's handle         
+            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            // Change the extended window style to include WS_EX_TRANSPARENT         
+            extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+        }
+
+        private void ClickThrough_OnUncheck(object sender, RoutedEventArgs e)
+        {
+            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle);
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hwnd, int index);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
     }
 }
