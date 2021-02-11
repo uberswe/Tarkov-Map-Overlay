@@ -1,4 +1,4 @@
-﻿using Gma.System.MouseKeyHook;
+using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -7,11 +7,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
 using System.ComponentModel;
-using System.Windows.Data;
 
 namespace TarkovMapOverlay
 {
@@ -24,7 +22,10 @@ namespace TarkovMapOverlay
         public const int WS_EX_TRANSPARENT = 0x00000020;
         public const int GWL_EXSTYLE = (-20);
         private int extendedStyle;
-
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hwnd, int index);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
         private IKeyboardMouseEvents m_GlobalHook;
         private Point startPoint;
         private double opacity;
@@ -45,57 +46,12 @@ namespace TarkovMapOverlay
         public MainWindow()
         {
             InitializeComponent();
-
+            
             // This ensures that the window is always on top, doesn't always work but should be good enough
             this.Topmost = true;
-            
-            //load SettingsFile if exists
-            SavedSettings settings = LoadSettings();
-            //load keybinds
-            minimizeKey = settings.minimizeKey;
-            minimizeButton = settings.minimizeMousebutton;
-            minimizeKeybindItem.Header = "_Change " + minimizeKey.ToString() + " Keybind for minimizing";
-            minimizeMouseButtonItem.IsEnabled = settings.minimizeWithMouseButton;
-            minimizeWithMouseButtonItem.IsChecked = settings.minimizeWithMouseButton;
-            canMinimizeWithMouse = settings.minimizeWithMouseButton;
-            minimizeMouseButtonItem.Header = "_Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
-            //load saved opacity
-            sliderMenu.Value = settings.visual_opacity * 100;
-            //load saved windowState
-            this.Top = settings.windowTop;
-            this.Left = settings.windowLeft;
-            this.Height = settings.windowHeight;
-            this.Width = settings.windowWidth;
+
+            LoadSettings();
             MoveIntoView();
-            //load last opened Map if file exists
-            if (settings.currentMapPath != null)
-            {
-                try
-                {
-                    BitmapImage bitmap = new BitmapImage(new Uri(settings.currentMapPath, uriKind: UriKind.RelativeOrAbsolute));
-                    TarkovMap.Source = bitmap;
-                }
-                catch (Exception e) {
-                    Window win = new Window();
-                    string error = "There was an error opening your last opened file. It will be removed from the selection";
-                    System.Windows.Forms.MessageBox.Show(error,"",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Console.Error.WriteLine(e.Message);
-                }
-            }
-            //load saved transparency BG setting
-            setting_transparency.IsChecked = settings.visual_transparency;
-            //load Custom MapList if Maps were Saved
-            _savedMaps.AddRange(settings.customMapList);
-            foreach (string MapName in settings.customMapList) {
-                if (!File.Exists(MapName)) {
-                    continue;
-                }
-                System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
-                item.Header = MapName;
-                item.Click += this.ButtonClicked;
-                List_CustomMaps.Items.Add(item);
-            }
             EnableMapListIfNotEmpty();
 
             //hooking MouseEvents to Imagecontainer for zoom and pan
@@ -244,7 +200,8 @@ namespace TarkovMapOverlay
                 this.Topmost = true;
                 this.Focus();
             }
-            else if (e.KeyCode == clickThroughToggleKey) {
+            else if (e.KeyCode == clickThroughToggleKey)
+            {
                 ToggleClickThroughWithKey();
             }
         }
@@ -416,52 +373,96 @@ namespace TarkovMapOverlay
 
         private bool SaveSettings() 
         {
-            if (!Directory.Exists("Settings"))
-            {
-                Directory.CreateDirectory("Settings");
-            }
-
-            SavedSettings settings = new SavedSettings();
-            settings.windowTop = this.Top;
-            settings.windowLeft = this.Left;
-            settings.windowHeight = this.Height;
-            settings.windowWidth = this.Width;
-
-            settings.visual_opacity = this.Opacity;
-            settings.visual_transparency = transparentBackground;
+            //new saveCode
+            Properties.Settings.Default.windowTop = this.Top;
+            Properties.Settings.Default.windowLeft = this.Left;
+            Properties.Settings.Default.windowHeight = this.Height;
+            Properties.Settings.Default.windowWidth = this.Width;
+            Properties.Settings.Default.visual_opacity = this.Opacity;
+            Properties.Settings.Default.visual_transparency = transparentBackground;
 
             if (TarkovMap.Source != null)
             {
-                settings.currentMapPath = TarkovMap.Source.ToString();
+                Properties.Settings.Default.currentMapPath = TarkovMap.Source.ToString();
             }
-            else {
-                settings.currentMapPath = null;
+            else
+            {
+                Properties.Settings.Default.currentMapPath = null;
             }
 
-            settings.customMapList.AddRange(_savedMaps);
-            settings.minimizeWithMouseButton = minimizeWithMouseButtonItem.IsChecked;
-            settings.minimizeKey = minimizeKey;
-            settings.minimizeMousebutton = minimizeButton;
+            foreach (string MapListItem in _savedMaps) {
+                if ( !Properties.Settings.Default.customMapList.Contains(MapListItem) ){
+                    Properties.Settings.Default.customMapList.Add(MapListItem);
+                }
+            }
+            Properties.Settings.Default.minimizeWithMouseButton = minimizeWithMouseButtonItem.IsChecked;
+            Properties.Settings.Default.minimizeKey = minimizeKey;
+            Properties.Settings.Default.minimizeMousebutton = minimizeButton;
 
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream fs = new FileStream("Settings/settings.sav", FileMode.Create);
-            bf.Serialize(fs, settings);
-            fs.Close();
+            Properties.Settings.Default.Save(); // Saves settings in application configuration file
+
             return true;
         }
 
-        private SavedSettings LoadSettings()
+        private void LoadSettings()
         {
-            if (File.Exists("Settings/settings.sav")) {
-                FileStream fs = new FileStream("Settings/settings.sav", FileMode.Open);
-                BinaryFormatter bf = new BinaryFormatter();
+            //load keybinds
+            minimizeKey = Properties.Settings.Default.minimizeKey;
+            minimizeButton = Properties.Settings.Default.minimizeMousebutton;
+            minimizeKeybindItem.Header = "_Change " + minimizeKey.ToString() + " Keybind for minimizing";
+            minimizeMouseButtonItem.IsEnabled = Properties.Settings.Default.minimizeWithMouseButton;
+            minimizeWithMouseButtonItem.IsChecked = Properties.Settings.Default.minimizeWithMouseButton;
+            canMinimizeWithMouse = Properties.Settings.Default.minimizeWithMouseButton;
+            minimizeMouseButtonItem.Header = "_Change " + minimizeButton.ToString() + " Mousebutton for minimizing";
 
-                SavedSettings settings = (SavedSettings)bf.Deserialize(fs);
+            //load saved opacity
+            sliderMenu.Value = Properties.Settings.Default.visual_opacity * 100;
 
-                return settings;
+            //load saved windowState
+            this.Top = Properties.Settings.Default.windowTop;
+            this.Left = Properties.Settings.Default.windowLeft;
+            this.Height = Properties.Settings.Default.windowHeight;
+            this.Width = Properties.Settings.Default.windowWidth;
+
+            //load last opened Map if file exists
+            if (Properties.Settings.Default.currentMapPath != null)
+            {
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage(new Uri(Properties.Settings.Default.currentMapPath, uriKind: UriKind.RelativeOrAbsolute));
+                    TarkovMap.Source = bitmap;
+                }
+                catch (Exception e)
+                {
+                    Window win = new Window();
+                    string error = "There was an error opening your last opened file. It will be removed from the selection";
+                    System.Windows.Forms.MessageBox.Show(error, "",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Console.Error.WriteLine(e.Message);
+                }
             }
 
-            return new SavedSettings();
+
+            //load saved transparency BG setting
+            setting_transparency.IsChecked = Properties.Settings.Default.visual_transparency;
+            //load Custom MapList if Maps were Saved
+
+            foreach (string customMapListItem in Properties.Settings.Default.customMapList)
+            {
+                _savedMaps.Add(customMapListItem);
+            }
+
+            foreach (string MapName in Properties.Settings.Default.customMapList)
+            {
+                if (!File.Exists(MapName))
+                {
+                    continue;
+                }
+                System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem();
+                item.Header = MapName;
+                item.Click += this.ButtonClicked;
+                List_CustomMaps.Items.Add(item);
+            }
         }
 
         public void MoveIntoView() //important if saved WindowPosition is out of screenbounds ( if saved on 2.screen for example )
@@ -542,7 +543,30 @@ namespace TarkovMapOverlay
 
         private void SourceChangedHandler(object sender, EventArgs e)
         {
-            image.RenderTransform = new MatrixTransform();
+            {
+                image.RenderTransform = new MatrixTransform(); image.RenderTransform = new MatrixTransform();
+            }
+        }
+
+        private void ToggleClickThroughWithKey()
+        {
+            setting_clickThrough.IsChecked = !setting_clickThrough.IsChecked;
+        }
+
+        private void ClickThrough_OnCheck(object sender, RoutedEventArgs e)
+        {
+            // Get this window's handle         
+            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            // Change the extended window style to include WS_EX_TRANSPARENT         
+            extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+        }
+
+        private void ClickThrough_OnUncheck(object sender, RoutedEventArgs e)
+        {
+            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle);
         }
 
         private void ToggleClickThroughWithKey() {
